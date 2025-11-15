@@ -70,11 +70,13 @@ const create = async ({
   birthdate,
 }) => {
   try {
-    const [userId] = await getKnex()(tables.user).insert({
-      email,
-      password_hash: passwordHash,
-      roles: JSON.stringify(roles),
-    });
+    const [userId] = await getKnex()(tables.user)
+      .insert({
+        email,
+        password_hash: passwordHash,
+        roles: JSON.stringify(roles),
+      })
+      .returning('id');
 
     await getKnex()(tables.patient).insert({
       id: userId,
@@ -129,11 +131,13 @@ const register = async ({
   name,
 }) => {
   try {
-    const [userId] = await getKnex()(tables.user).insert({
-      email,
-      password_hash: passwordHash,
-      roles: JSON.stringify(roles),
-    });
+    const [userId] = await getKnex()(tables.user)
+      .insert({
+        email,
+        password_hash: passwordHash,
+        roles: JSON.stringify(roles),
+      })
+      .returning('id');
 
     await getKnex()(tables.patient).insert({
       id: userId,
