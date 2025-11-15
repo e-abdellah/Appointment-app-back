@@ -64,16 +64,16 @@ async function initializeData() {
     throw new Error("Could not initialize the data layer");
   }
 
-  // Run migrations
-  try {
-    await knexInstance.migrate.latest();
-  } catch (error) {
-    logger.error("Error while migrating the database", { error });
-    throw new Error("Migrations failed, check the logs");
-  }
-
-  // Seed data in development
+  // Run migrations only in development (production DB should already be migrated)
   if (isDevelopment) {
+    try {
+      await knexInstance.migrate.latest();
+    } catch (error) {
+      logger.error("Error while migrating the database", { error });
+      throw new Error("Migrations failed, check the logs");
+    }
+
+    // Seed data in development
     try {
       await knexInstance.seed.run();
     } catch (error) {
