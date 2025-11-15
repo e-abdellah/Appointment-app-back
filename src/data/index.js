@@ -7,7 +7,7 @@ const { getLogger } = require("../core/logging");
 const NODE_ENV = config.get("env");
 const isDevelopment = NODE_ENV === "development";
 
-const DATABASE_CLIENT = isDevelopment ? "mysql" : "pg"; // Use MySQL locally, PostgreSQL in production
+const DATABASE_CLIENT = isDevelopment ? "mysql2" : "pg"; // Use MySQL locally, PostgreSQL in production
 const DATABASE_NAME = config.get("database.name");
 const DATABASE_HOST = config.get("database.host");
 const DATABASE_PORT = config.get("database.port");
@@ -25,7 +25,9 @@ async function initializeData() {
     connection: {
       host: DATABASE_HOST,
       port: DATABASE_PORT,
-      database: DATABASE_NAME,
+      ...(isDevelopment && DATABASE_CLIENT === "mysql2"
+        ? {}
+        : { database: DATABASE_NAME }), // Don't specify database initially for MySQL
       user: DATABASE_USERNAME,
       password: DATABASE_PASSWORD,
       ...(DATABASE_CLIENT === "pg" && { ssl: { rejectUnauthorized: false } }), // Add SSL for PostgreSQL
@@ -46,12 +48,12 @@ async function initializeData() {
     await knexInstance.raw("SELECT 1+1 AS result"); // Test database connection
 
     // Only create the database if running locally with MySQL
-    if (isDevelopment && DATABASE_CLIENT === "mysql") {
+    if (isDevelopment && DATABASE_CLIENT === "mysql2") {
       await knexInstance.raw(`CREATE DATABASE IF NOT EXISTS ${DATABASE_NAME}`);
     }
 
     // Reinitialize with the correct database for MySQL after creation
-    if (isDevelopment && DATABASE_CLIENT === "mysql") {
+    if (isDevelopment && DATABASE_CLIENT === "mysql2") {
       await knexInstance.destroy();
       knexOptions.connection.database = DATABASE_NAME;
       knexInstance = knex(knexOptions);
