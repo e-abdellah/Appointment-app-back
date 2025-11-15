@@ -1,7 +1,12 @@
 const { getLogger } = require("../core/logging");
 const { tables, getKnex } = require("../data/index");
 
-const formatPatient = ({ patientId, patientEmail, patientRoles, ...patient }) => {
+const formatPatient = ({
+  patientId,
+  patientEmail,
+  patientRoles,
+  ...patient
+}) => {
   return {
     ...patient,
     user: {
@@ -36,7 +41,12 @@ const findCount = async () => {
 
 const findByDoctorId = async (doctorId) => {
   const patients = await getKnex()(tables.appointment)
-    .join(tables.patient, `${tables.patient}.id`, "=", `${tables.appointment}.patient_id`)
+    .join(
+      tables.patient,
+      `${tables.patient}.id`,
+      "=",
+      `${tables.appointment}.patient_id`
+    )
     .join(tables.user, `${tables.user}.id`, "=", `${tables.patient}.id`)
     .where(`${tables.appointment}.doctor_id`, doctorId)
     .select(SELECT_COLUMNS)
@@ -76,7 +86,7 @@ const create = async ({
         password_hash: passwordHash,
         roles: JSON.stringify(roles),
       })
-      .returning('id');
+      .returning("id");
 
     await getKnex()(tables.patient).insert({
       id: userId,
@@ -124,12 +134,7 @@ const create = async ({
 //   }
 // };
 
-const register = async ({
-  email,
-  passwordHash,
-  roles,
-  name,
-}) => {
+const register = async ({ email, passwordHash, roles, name }) => {
   try {
     const [userId] = await getKnex()(tables.user)
       .insert({
@@ -137,16 +142,16 @@ const register = async ({
         password_hash: passwordHash,
         roles: JSON.stringify(roles),
       })
-      .returning('id');
+      .returning("id");
 
     await getKnex()(tables.patient).insert({
       id: userId,
       name,
-      street: 'Default Street', 
-      number: 'Default Number', 
-      postalCode: 'Default Postalcode', 
-      city: 'Default City', 
-      birthdate: '2000-01-01', 
+      street: "Default Street",
+      number: "Default Number",
+      postalCode: "Default Postalcode",
+      city: "Default City",
+      birthdate: "2000-01-01",
     });
 
     return userId;
