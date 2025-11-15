@@ -6,6 +6,7 @@ module.exports = {
   cors: {
     origins: [
       "https://appointment-app-web-2023-24.onrender.com",
+      "https://appointment-app-front.vercel.app",
       process.env.FRONTEND_URL || "http://localhost:5173",
     ],
     maxAge: 3 * 60 * 60, // 3 hours
