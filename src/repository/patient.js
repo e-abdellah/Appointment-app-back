@@ -144,7 +144,7 @@ const register = async ({
       name,
       street: 'Default Street', 
       number: 'Default Number', 
-      postalcode: 'Default Postalcode', 
+      postal_code: 'Default Postalcode', 
       city: 'Default City', 
       birthdate: '2000-01-01', 
     });
