@@ -7,7 +7,8 @@
   "license": "MIT",
   "scripts": {
     "s": "env-cmd nodemon",
-    "start": "env-cmd nodemon",
+    "start": "node src/index.js",
+    "dev": "env-cmd nodemon",
     "t": "env-cmd -f .env.test jest --runInBand",
     "test": "env-cmd -f .env.test jest --runInBand",
     "test:coverage": "env-cmd -f .env.test jest --runInBand --coverage",
